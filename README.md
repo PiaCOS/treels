@@ -1,4 +1,4 @@
-# TREELS
+# TREELS (work in progress)
 
 ## WHat it should do
 
