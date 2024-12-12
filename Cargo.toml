@@ -2,7 +2,14 @@
 name = "treels"
 version = "0.1.0"
 edition = "2021"
-authors = ["Pia <https://github.com/PiaCOS>"]
+authors = ["Pia <pia.cosneau@gmail.com>"]
+description = "Display your files in a recursive manner"
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/PiaCOS/treels"
+keywords = ["cli"]
+categories = ["command-line-utilities"]
+
 
 [dependencies]
 clap = { version = "4.5.23", features = ["derive"] }

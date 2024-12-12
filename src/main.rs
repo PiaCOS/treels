@@ -3,7 +3,7 @@ use std::fs::metadata;
 use std::path::PathBuf;
 use clap::Parser;
 
-/// Display your files as a tree with specific depth
+/// Display your files in a recursive manner
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
