@@ -15,15 +15,15 @@ struct Args {
     #[arg(short, long, default_value_t = String::from("."))]
     path: String,
 
-    /// Ignore dotfiles in the display
+    /// Include dotfiles in the display
     #[arg(short, long, action, default_value_t = false)]
-    ignore_dots: bool,
+    include_dots: bool,
 }
 
 
 fn main() {
     let args = Args::parse();
-    treels(&args.path, 0, args.depth, args.ignore_dots)
+    treels(&args.path, 0, args.depth, args.include_dots)
 }
 
 fn is_folder(p: &PathBuf) -> bool {
@@ -64,7 +64,7 @@ fn is_dot(name: &str) -> bool {
     name.chars().nth(0).unwrap() == '.'
 }
 
-fn treels(dir: &str, depth: usize, max_depth: usize, ignore_dots: bool) {
+fn treels(dir: &str, depth: usize, max_depth: usize, include_dots: bool) {
     let mut paths: Vec<PathBuf> = fs::read_dir(dir)
         .unwrap()
         .map(|n| n.unwrap().path())
@@ -75,14 +75,14 @@ fn treels(dir: &str, depth: usize, max_depth: usize, ignore_dots: bool) {
         // let p = path;
         let name = get_file_name(&p).unwrap();
 
-        if !(ignore_dots && is_dot(&name)) {
+        if !(!include_dots && is_dot(&name)) {
             match is_folder(&p) {
                 false => print_file(name, depth),
                 _ => {
                     print_dir(name, depth);
                     if depth < max_depth {
                         let new_dir = p.to_str().unwrap();
-                        treels(&new_dir, depth+1, max_depth, ignore_dots);
+                        treels(&new_dir, depth+1, max_depth, include_dots);
                     }
                 }
             }
