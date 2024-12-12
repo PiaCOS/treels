@@ -20,15 +20,30 @@ struct Args {
     include_dots: bool,
 }
 
+enum FileType {
+    Folder,
+    File,
+    Undefined,
+}
 
 fn main() {
     let args = Args::parse();
     treels(&args.path, 0, args.depth, args.include_dots)
 }
 
-fn is_folder(p: &PathBuf) -> bool {
-    let md = metadata(p).unwrap();
-    md.is_dir()
+fn is_folder(p: &PathBuf) -> Option<bool> {
+    match metadata(p)  {
+        Ok(md) => Some(md.is_dir()),
+        Err(_) => None,
+    }
+}
+
+fn determine_file_type(p: &PathBuf) -> FileType {
+    match is_folder(p) {
+        Some(true) => FileType::Folder,
+        Some(false) => FileType::File,
+        None => FileType::Undefined,
+    }
 }
 
 fn get_file_name(p: &PathBuf) -> Result<&str, &str> {
@@ -38,7 +53,7 @@ fn get_file_name(p: &PathBuf) -> Result<&str, &str> {
     }
 }
 
-fn print_file(p: &str, depth: usize) {
+fn print_file(p: &str, depth: usize, filetype: &FileType) {
     let mut prefix = String::new();
     for i in 0..depth {
         prefix.push_str("   ");
@@ -46,18 +61,11 @@ fn print_file(p: &str, depth: usize) {
             prefix.push_str("|");
         }
     }
-    println!("{}---> {}", prefix, p);
-}
-
-fn print_dir(p: &str, depth: usize) {
-    let mut prefix = String::new();
-    for i in 0..depth {
-        prefix.push_str("   ");
-        if i == depth-1 {
-            prefix.push_str("|");
-        }
+    match filetype {
+        FileType::Folder => println!("{}---> /{}", prefix, p),
+        FileType::File => println!("{}---> {}", prefix, p),
+        FileType::Undefined => println!("{}---> ?{}", prefix, p),
     }
-    println!("{}---> /{}", prefix, p);
 }
 
 fn is_dot(name: &str) -> bool {
@@ -74,17 +82,18 @@ fn treels(dir: &str, depth: usize, max_depth: usize, include_dots: bool) {
     for p in paths {
         // let p = path;
         let name = get_file_name(&p).unwrap();
-
-        if !(!include_dots && is_dot(&name)) {
-            match is_folder(&p) {
-                false => print_file(name, depth),
-                _ => {
-                    print_dir(name, depth);
+        
+        if include_dots || !is_dot(&name) {
+            let filetype = determine_file_type(&p);
+            match filetype {
+                FileType::Folder => {
+                    print_file(name, depth, &filetype) ;
                     if depth < max_depth {
                         let new_dir = p.to_str().unwrap();
                         treels(&new_dir, depth+1, max_depth, include_dots);
                     }
                 }
+                _ => print_file(name, depth, &filetype),
             }
         }   
     }
