@@ -1,6 +1,7 @@
 # TREELS
 
 Treels is a recursive version of the famous `ls` command.
+
 **tree + ls = treels**
 
 ## Command
