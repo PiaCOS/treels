@@ -44,20 +44,6 @@ If you have Rust installed, you can easily install `treels` via Cargo:
 cargo install treels
 ```
 
-### From Precompiled Binaries
-
-If you don’t have Rust installed, you can download precompiled binaries from the Releases page:
-
-- Find the binary for your operating system.
-- Download it and place it somewhere in your PATH.
-
-Example on MacOS:
-
-```sh
-mv treels-linux /usr/local/bin/treels
-chmod +x /usr/local/bin/treels
-```
-
 ### Building from source
 
 If you prefer, you can clone this repository and build treels manually:
