@@ -1,26 +1,29 @@
 use std::fs;
-use std::env;
 use std::fs::metadata;
 use std::path::PathBuf;
+use clap::Parser;
 
+/// Display your files as a tree with specific depth
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Depth of the tree
+    #[arg(short, long, default_value_t = 2)]
+    depth: usize,
+    
+    /// Path to grow your tree
+    #[arg(short, long, default_value_t = String::from("."))]
+    path: String,
 
-// const DEPTH: usize = 2;
-const IGNORE_DOTS: bool = false;
+    /// Ignore dotfiles in the display
+    #[arg(short, long, action, default_value_t = false)]
+    ignore_dots: bool,
+}
+
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    match args.len() {
-        2 => {
-                let depth: usize = args[1].parse().unwrap();
-                treels(".", 0, depth);
-            },
-        3 => {
-                let depth: usize = args[1].parse().unwrap();
-                let dir: &str = &args[2];
-                treels(dir, 0, depth)
-            },
-        _ => treels(".", 0, 3)
-    }
+    let args = Args::parse();
+    treels(&args.path, 0, args.depth, args.ignore_dots)
 }
 
 fn is_folder(p: &PathBuf) -> bool {
@@ -61,7 +64,7 @@ fn is_dot(name: &str) -> bool {
     name.chars().nth(0).unwrap() == '.'
 }
 
-fn treels(dir: &str, depth: usize, max_depth: usize) {
+fn treels(dir: &str, depth: usize, max_depth: usize, ignore_dots: bool) {
     let mut paths: Vec<PathBuf> = fs::read_dir(dir)
         .unwrap()
         .map(|n| n.unwrap().path())
@@ -72,14 +75,14 @@ fn treels(dir: &str, depth: usize, max_depth: usize) {
         // let p = path;
         let name = get_file_name(&p).unwrap();
 
-        if !(IGNORE_DOTS && is_dot(&name)) {
+        if !(ignore_dots && is_dot(&name)) {
             match is_folder(&p) {
                 false => print_file(name, depth),
                 _ => {
                     print_dir(name, depth);
                     if depth < max_depth {
                         let new_dir = p.to_str().unwrap();
-                        treels(&new_dir, depth+1, max_depth);
+                        treels(&new_dir, depth+1, max_depth, ignore_dots);
                     }
                 }
             }
