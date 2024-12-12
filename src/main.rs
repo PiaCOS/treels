@@ -8,7 +8,7 @@ use clap::Parser;
 #[command(version, about, long_about = None)]
 struct Args {
     /// Depth of the tree
-    #[arg(short, long, default_value_t = 2)]
+    #[arg(short, long, default_value_t = 1)]
     depth: usize,
     
     /// Path to grow your tree
@@ -73,10 +73,12 @@ fn is_dot(name: &str) -> bool {
 }
 
 fn treels(dir: &str, depth: usize, max_depth: usize, include_dots: bool) {
-    let mut paths: Vec<PathBuf> = fs::read_dir(dir)
-        .unwrap()
-        .map(|n| n.unwrap().path())
-        .collect();
+    let mut paths: Vec<PathBuf> = match fs::read_dir(dir) {
+        Ok(read_dir) => read_dir
+            .filter_map(|entry| entry.ok().map(|n| n.path()))
+            .collect(),
+        Err(_) => Vec::new(),
+    };
     paths.sort(); 
 
     for p in paths {

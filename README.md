@@ -52,6 +52,7 @@ If you don’t have Rust installed, you can download precompiled binaries from t
 - Download it and place it somewhere in your PATH.
 
 Example on MacOS:
+
 ```sh
 mv treels-linux /usr/local/bin/treels
 chmod +x /usr/local/bin/treels
@@ -67,8 +68,6 @@ cd treels
 cargo build --release
 cp target/release/treels /usr/local/bin/treels
 ```
-
-
 
 ## License
 
