@@ -6,7 +6,7 @@ Treels is a recursive version of the famous `ls` command.
 
 ## Command
 
-```sh
+```
 Display your files in a recursive manner
 
 Usage: treels [OPTIONS]
