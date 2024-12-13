@@ -1,15 +1,20 @@
 [package]
 name = "treels"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Pia <pia.cosneau@gmail.com>"]
-description = "Display your files in a recursive manner"
-readme = "README.md"
-license = "MIT"
 repository = "https://github.com/PiaCOS/treels"
 keywords = ["cli"]
 categories = ["command-line-utilities"]
+description = "Display your files in a recursive manner"
+readme = "README.md"
+license = "MIT"
 
 
 [dependencies]
 clap = { version = "4.5.23", features = ["derive"] }
+
+
+[profile.release]
+lto = true
+codegen-units = 1
